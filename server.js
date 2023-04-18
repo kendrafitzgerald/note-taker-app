@@ -39,10 +39,9 @@ app.post('/api/notes', (req, res) => {
         note_id: uuid.v4(),
     };
 
-    notes.push(newNote)
-    const noteString = JSON.stringify(newNote)
+    notes.push(newNote);
 
-    fs.writeFile('./db/db.json', noteString, (err) =>
+    fs.writeFile(`./db/db.json`, JSON.stringify(notes), (err) =>
         err ? console.error(err) : console.log(`New Note has been written to JSON file`)
     );
     const response = {
