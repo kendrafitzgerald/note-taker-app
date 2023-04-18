@@ -1,5 +1,7 @@
 const express = require('express');
-const uuid = require('./uuid')
+const uuid = require('./uuid');
+const notes = require('./db/db.json');
+const fs = require('fs');
 
 
 const PORT= 3001;
@@ -18,3 +20,38 @@ app.get('/notes', (req, res) =>
 app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
+
+app.get('/api/notes', (req, res) =>
+    res.json(notes)
+);
+
+app.post('/api/notes', (req, res) => {
+
+ const {title, text} = req.body;
+
+ if (title && text) {
+    const newNote = {
+        title,
+        text,
+        note_id: uuid(),
+    };
+
+    const noteString = JSON.stringify(newNote)
+
+    fs.writeFile(`./db/${newNote}.json`, noteString, (err) =>
+        err ? console.error(err) : console.log(`New Note has been written to JSON file`)
+    );
+    const response = {
+        status: 'success',
+        body: newNote,
+     };
+     console.log(response);
+     res.status(201).json(response)
+ } else {
+    res.status(500).json('Error in saving note')
+ };
+ });
+
+ app.listen(PORT, () =>
+    console.log(`Listening at http://localhost:${PORT}`)
+ )
