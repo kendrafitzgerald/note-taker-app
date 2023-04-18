@@ -1,6 +1,7 @@
 const express = require('express');
 const uuid = require('./uuid');
 const notes = require('./db/db.json');
+const path = require('path')
 const fs = require('fs');
 
 
@@ -13,13 +14,15 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(express.static('public'));
 
-app.get('/notes', (req, res) =>
-    res.sendFile(path.join(__dirname, '/public/notes.html'))
-);
 
 app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
+
+app.get('/notes', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
+
 
 app.get('/api/notes', (req, res) =>
     res.json(notes)
@@ -38,7 +41,7 @@ app.post('/api/notes', (req, res) => {
 
     const noteString = JSON.stringify(newNote)
 
-    fs.writeFile(`./db/${newNote}.json`, noteString, (err) =>
+    fs.writeFile(`./db/${newNote.note_id}.json`, noteString, (err) =>
         err ? console.error(err) : console.log(`New Note has been written to JSON file`)
     );
     const response = {
@@ -48,7 +51,7 @@ app.post('/api/notes', (req, res) => {
      console.log(response);
      res.status(201).json(response)
  } else {
-    res.status(500).json('Error in saving note')
+    res.status(500).json('Need note title and note text')
  };
  });
 
