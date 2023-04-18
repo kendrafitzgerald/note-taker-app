@@ -1,5 +1,5 @@
 const express = require('express');
-const uuid = require('./uuid');
+const uuid = require('uuid');
 const notes = require('./db/db.json');
 const path = require('path')
 const fs = require('fs');
@@ -36,12 +36,12 @@ app.post('/api/notes', (req, res) => {
     const newNote = {
         title,
         text,
-        note_id: uuid(),
+        note_id: uuid.v4(),
     };
 
     const noteString = JSON.stringify(newNote)
 
-    fs.writeFile(`./db/${newNote.note_id}.json`, noteString, (err) =>
+    fs.writeFile(`./db/${newNote.id}.json`, noteString, (err) =>
         err ? console.error(err) : console.log(`New Note has been written to JSON file`)
     );
     const response = {
