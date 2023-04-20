@@ -21,7 +21,9 @@ app.get('/notes', (req, res) =>
 
 
 app.get('/api/notes', (req, res) =>
-    res.json(notes)
+    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+        err ? console.error(err) : res.json(JSON.parse(data))
+    })
 );
 
 app.post('/api/notes', (req, res) => {
@@ -50,6 +52,28 @@ app.post('/api/notes', (req, res) => {
     res.status(500).json('Need note title and note text')
  };
  });
+
+ app.delete("/api/notes/:id", (req, res) => {
+    const noteId = req.params.id
+    console.log(`ID: ${noteId}`)
+
+    fs.readFile("./db/db.json", "utf-8", (err, data) => {
+        if (err) {
+            throw err
+        }
+        const newNotes = JSON.parse(data).filter(note => note.id != noteId)
+
+        fs.writeFile("./db/db.json", JSON.stringify(newNotes, null, 4), (err) => {
+            if (err) {
+                throw err
+            }
+
+            fs.readFile("./db/db.json", "utf-8", (err, data) => {
+                err? console.log(err) : res.json(JSON.stringify(data))
+            });
+        });
+    });    
+});
 
  app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
