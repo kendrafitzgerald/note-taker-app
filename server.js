@@ -15,10 +15,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
 
-app.get('/', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/index.html'))
-);
-
 app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
@@ -54,6 +50,10 @@ app.post('/api/notes', (req, res) => {
     res.status(500).json('Need note title and note text')
  };
  });
+
+ app.get('*', (req, res) => 
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 
  app.listen(PORT, () =>
     console.log(`Listening at http://localhost:${PORT}`)
